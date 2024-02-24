@@ -94,20 +94,17 @@ public class SecurityConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("scaler.com")
-                .clientSecret("1234wvnrwbnrwnb")
+                .clientId("oidc-client")
+                .clientSecret("$2a$12$vYJqgZOu0PhcZ2cnmq2DyebaY0zHUwgCY8hwjR47kmIsXIJdNN9Qy")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                // after login via google, go to this page
-                .redirectUri("https://scaler.com/home")
-                .postLogoutRedirectUri("https://scaler.com/academy")
+                .redirectUri("https://oauth.pstmn.io/v1/callback")
+                .postLogoutRedirectUri("https://oauth.pstmn.io/v1/callback")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .scope("ADMIN")
                 .scope("STUDENT")
-                .scope("INSTRUCTOR")
-                .scope("MENTOR")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
