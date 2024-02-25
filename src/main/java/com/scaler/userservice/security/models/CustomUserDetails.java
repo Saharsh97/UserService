@@ -49,6 +49,7 @@ public class CustomUserDetails implements UserDetails {
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
         this.enabled = true;
+        this.userId = user.getId();
     }
 
     private List<CustomGrantedAuthority> authorities;
@@ -58,6 +59,8 @@ public class CustomUserDetails implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    // 30. add getter and setter for this
+    private Long userId;
 
     // 5. how will I implement these methods.
     // I have an object of User.
@@ -84,6 +87,10 @@ public class CustomUserDetails implements UserDetails {
 //        return grantedAuthorities;
 
         return authorities;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     @Override
@@ -127,3 +134,13 @@ public class CustomUserDetails implements UserDetails {
     // in future, you can add these columns in User Table.
     // and answer these methods from the table columns.
 }
+
+
+
+// 26. Any field in B part (JSON) of JWT is called a claim.
+// we want to add custom claims.
+// do you think this would be a common requirement by anyone to add custom claims.
+// I should google it.
+// "spring authorization server add custom claims to jwt"
+// add 2nd code.
+
