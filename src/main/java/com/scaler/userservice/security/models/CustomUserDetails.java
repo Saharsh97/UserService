@@ -3,6 +3,7 @@ package com.scaler.userservice.security.models;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.scaler.userservice.models.Role;
 import com.scaler.userservice.models.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -22,6 +23,9 @@ public class CustomUserDetails implements UserDetails {
     private boolean enabled;
     private List<CustomGrantedAuthority> authorities;
 
+    @Getter
+    private Long userId;
+
     public CustomUserDetails(){}
 
     public CustomUserDetails(User user){
@@ -37,6 +41,8 @@ public class CustomUserDetails implements UserDetails {
             customGrantedAuthorities.add(new CustomGrantedAuthority(role));
         }
         this.authorities = customGrantedAuthorities;
+
+        this.userId = user.getId();
     }
 
     @Override
