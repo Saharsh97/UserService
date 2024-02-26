@@ -71,8 +71,10 @@ public class SecurityConfig {
             throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
+                .cors().disable()
+                .csrf().disable()
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 .formLogin(Customizer.withDefaults());
@@ -80,16 +82,27 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.builder()
-                .username("user")
-                .password("$2a$12$hTiCBOQUdJvAK6/61DGpIu5w5K/IxO74y6kHs0a1jhpZ128K5SEl6")
-                .roles("USER")
-                .build();
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails userDetails = User.builder()
+//                .username("saharsh")
+//                .password("$2a$12$jwMz3RhSPyu0avex8MZpueNxrqZzgYBhTko9iH7J/lsMWv/K4LNL.")
+//                .roles("USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(userDetails);
+//    }
 
-        return new InMemoryUserDetailsManager(userDetails);
-    }
+    // am I done? I will have to now make sure, that my User is registered in my DB.
+    // use normal method.
+    // run code. sign-in error.
+    // It is expecting a token to come in the request.
+    // that's why, please sign-in first
+    // change auth config above. permitAll()
+
+    // add users to DB
+
+    // now login for getting token.
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
