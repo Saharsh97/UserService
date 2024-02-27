@@ -11,3 +11,9 @@ public class UserServiceApplication {
 	}
 
 }
+
+// 1. I want to use my DB for maintaining users.
+
+// 2. how we can Add Custom data to the JWT
+
+// 3. I want ProductService to accept only Authenticated Request.

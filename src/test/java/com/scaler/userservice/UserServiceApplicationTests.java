@@ -25,8 +25,8 @@ class UserServiceApplicationTests {
 	@Test
 	void registerPostManAsRegisteredClientToMyDB(){
 		RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-				.clientId("oidc-client")
-				.clientSecret("$2a$12$vYJqgZOu0PhcZ2cnmq2DyebaY0zHUwgCY8hwjR47kmIsXIJdNN9Qy")
+				.clientId("postman-client")
+				.clientSecret("$2a$12$jh1eGc0rFXhANZY08.1pHu0nlAuskJ9Xbrbs69PxJ7VGHlQx5kAlK")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
