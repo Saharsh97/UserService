@@ -13,82 +13,87 @@ import java.util.List;
 
 @JsonDeserialize
 public class CustomUserDetails implements UserDetails {
-
-//    private User user;
+    //    private User user;
+    private List<CustomGrantedAuthority> authorities;
     private String password;
     private String username;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
-    private List<CustomGrantedAuthority> authorities;
-
     private Long userId;
 
-
-    public CustomUserDetails(){}
-
-    public CustomUserDetails(User user){
-//        this.user = user;
-        this.username = user.getEmail();
-        this.password = user.getHashedPassword();
-        this.accountNonLocked = true;
-        this.accountNonExpired = true;
-        this.credentialsNonExpired = true;
-        this.enabled = true;
-
-        List<CustomGrantedAuthority> authoritiesList = new ArrayList<>();
-        for(Role role: user.getRoles()){
-            CustomGrantedAuthority customGrantedAuthority = new CustomGrantedAuthority(role);
-            authoritiesList.add(customGrantedAuthority);
-        }
-        this.authorities = authoritiesList;
-        this.userId = user.getId();
+    public Long getUserId() {
+        return userId;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public CustomUserDetails() {}
+
+    public CustomUserDetails(User user) {
+//        this.user = user;
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.enabled = true;
+        this.credentialsNonExpired = true;
+        this.password = user.getHashedPassword();
+        this.username = user.getEmail();
+        this.userId = user.getId();
+
+        List<CustomGrantedAuthority> grantedAuthorities = new ArrayList<>();
+
+        for (Role role: user.getRoles()) {
+            grantedAuthorities.add(new CustomGrantedAuthority(role));
+        }
+
+        this.authorities = grantedAuthorities;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // return a List<something which is like a GrantedAuthority>
+//        List<CustomGrantedAuthority> grantedAuthorities = new ArrayList<>();
+//
+//        for (Role role: user.getRoles()) {
+//            grantedAuthorities.add(new CustomGrantedAuthority(role));
+//        }
+//
+//        return grantedAuthorities;
         return authorities;
     }
 
     @Override
     public String getPassword() {
+//        return user.getHashedPassword();
         return password;
     }
 
     @Override
     public String getUsername() {
+//        return user.getEmail();
         return username;
-    }
-
-    public Long getUserId(){
-        return userId;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        // google maintains your token for 3months.
-        // after that, your account is expired.
-        // it has login again, generate token again
         return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // banking websites, too many login attempts. locked out
         return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // creds or your password has expired.
         return credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        // deactivated or active.
         return enabled;
     }
 }

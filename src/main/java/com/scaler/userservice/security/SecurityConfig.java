@@ -81,8 +81,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().permitAll()
                 )
-                .cors().disable()
                 .csrf().disable()
+                .cors().disable()
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 .formLogin(Customizer.withDefaults());
@@ -93,41 +93,38 @@ public class SecurityConfig {
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //        UserDetails userDetails = User.builder()
-//                .username("saharsh")
-//                .password("$2a$12$3RqDtAQ/byLhnB7349n02e.wQ8l8ERF7EnPd1mVb9IKBDTkcB3f3a")
+//                .username("user")
+//                .password("$2a$16$AcBmaZLe06Hx5QSL1PVmRev3W3Fuzy..A18THjaUM.AYEcEDoTORC")
 //                .roles("USER")
 //                .build();
 //
 //        return new InMemoryUserDetailsManager(userDetails);
 //    }
 
-    @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("oidc-client")
-                .clientSecret("$2a$12$vYJqgZOu0PhcZ2cnmq2DyebaY0zHUwgCY8hwjR47kmIsXIJdNN9Qy")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("https://oauth.pstmn.io/v1/callback")
-                .postLogoutRedirectUri("https://oauth.pstmn.io/v1/callback")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope("ADMIN")
-                .scope("STUDENT")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-
-        return new InMemoryRegisteredClientRepository(oidcClient);
-    }
+//    @Bean
+//    public RegisteredClientRepository registeredClientRepository() {
+//        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("oidc-client")
+//                .clientSecret("{noop}secret")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .redirectUri("https://oauth.pstmn.io/v1/callback")
+//                .postLogoutRedirectUri("https://oauth.pstmn.io/v1/callback")
+//                .scope(OidcScopes.OPENID)
+//                .scope(OidcScopes.PROFILE)
+//                .scope("ADMIN")
+//                .scope("STUDENT")
+//                .scope("MENTOR") // Role
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+//                .build();
+//
+//        return new InMemoryRegisteredClientRepository(oidcClient);
+//    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         KeyPair keyPair = generateRsaKey();
-        // in Scaler tokens, we were using HS256, and my own Secret key, simple string.
-        // my UserService, is using RSA256, using Public Key and Private key
-        // RSA256 is Asymmetric encryption algorithm
-        // HS256 is a Symmetric Encryption algorithm
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
         RSAKey rsaKey = new RSAKey.Builder(publicKey)
@@ -171,10 +168,12 @@ public class SecurityConfig {
                             .map(c -> c.replaceFirst("^ROLE_", ""))
                             .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
                     claims.put("roles", roles);
-                    claims.put("userId", ((CustomUserDetails) context.getPrincipal().getPrincipal()).getUserId());
+                    claims.put("userId", ((CustomUserDetails)context.getPrincipal().getPrincipal()).getUserId());
                 });
             }
         };
     }
+
+    // Add a claim called user_id with some value
 
 }
