@@ -1,5 +1,6 @@
 package com.scaler.userservice.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.scaler.userservice.dtos.*;
 import com.scaler.userservice.exceptions.InvalidPasswordException;
 import com.scaler.userservice.exceptions.TokenInvalidOrExpiredException;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User signup(@RequestBody SignupRequestDTO signupRequestDTO) throws UserAlreadyExistsException {
+    public User signup(@RequestBody SignupRequestDTO signupRequestDTO) throws UserAlreadyExistsException, JsonProcessingException {
         return userService.signup(
                 signupRequestDTO.getName(),
                 signupRequestDTO.getEmail(),
