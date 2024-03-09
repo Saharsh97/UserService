@@ -1,5 +1,8 @@
 package com.scaler.userservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scaler.userservice.dtos.SignUpEventDTO;
 import com.scaler.userservice.exceptions.InvalidPasswordException;
 import com.scaler.userservice.exceptions.TokenInvalidOrExpiredException;
 import com.scaler.userservice.exceptions.UserAlreadyExistsException;
@@ -10,6 +13,7 @@ import com.scaler.userservice.repositories.TokenRepository;
 import com.scaler.userservice.repositories.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +28,23 @@ public class UserService {
     private UserRepository userRepository;
     private TokenRepository tokenRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private KafkaTemplate<String, String> kafkaTemplate;
+    private ObjectMapper objectWrapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, TokenRepository tokenRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
+    public UserService(UserRepository userRepository,
+                       TokenRepository tokenRepository,
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       KafkaTemplate kafkaTemplate,
+                       ObjectMapper objectWrapper){
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectWrapper = objectWrapper;
     }
 
-    public User signup(String name, String email, String password) throws UserAlreadyExistsException {
+    public User signup(String name, String email, String password) throws UserAlreadyExistsException, JsonProcessingException {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isPresent()){
             throw new UserAlreadyExistsException("user already exists with the give email id");
@@ -44,6 +56,19 @@ public class UserService {
         user.setHashedPassword(bCryptPasswordEncoder.encode(password));
 
         User savedUser = userRepository.save(user);
+
+        SignUpEventDTO signUpEventDTO = new SignUpEventDTO();
+        signUpEventDTO.setTo(email);
+        signUpEventDTO.setFrom("scaler.testing8297@gmail.com");
+        signUpEventDTO.setSubject("Welcome to Scaler");
+        signUpEventDTO.setBody("we are happy to register you to our website" +
+                "looking forward to you achieving great success!!");
+
+        kafkaTemplate.send(
+                "signupEventTopic",
+                objectWrapper.writeValueAsString(signUpEventDTO)
+        );
+
         return savedUser;
     }
 
