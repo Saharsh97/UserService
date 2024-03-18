@@ -25,6 +25,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
+        System.out.println("Got request here at " + System.currentTimeMillis());
+        User user = userService.findUserById(id);
+        return user;
+    }
+
     @PostMapping("/register")
     public User signup(@RequestBody SignupRequestDTO signupRequestDTO) throws UserAlreadyExistsException, JsonProcessingException {
         return userService.signup(

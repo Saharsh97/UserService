@@ -44,6 +44,15 @@ public class UserService {
         this.objectWrapper = objectWrapper;
     }
 
+    public User findUserById(Long id) throws UserNotFoundException {
+        Optional<User> userOptional = userRepository.findById(id);
+        if(userOptional.isEmpty()){
+            throw new UserNotFoundException("user with id " + id + " not found");
+        }
+        User user = userOptional.get();
+        return user;
+    }
+
     public User signup(String name, String email, String password) throws UserAlreadyExistsException, JsonProcessingException {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isPresent()){
